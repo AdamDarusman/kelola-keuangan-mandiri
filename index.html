@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Keuangan Mandiri - Smart Financial Tracker</title>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6.5 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Background Glows for Modern Aesthetic -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Navbar / Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-wallet"></i>
+        </div>
+        <div class="brand-info">
+          <h1>Kelola<span>Keuangan</span></h1>
+          <p class="brand-tagline">Catatan Finansial Mandiri</p>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="date-chip">
+          <i class="fa-regular fa-calendar-days"></i>
+          <span id="currentDateDisplay">-</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- Top Metrics Section -->
+    <section class="metrics-grid">
+      <!-- Total Saldo (Hero Card) -->
+      <div class="metric-card balance-hero-card">
+        <div class="hero-top">
+          <div class="card-icon-pill">
+            <i class="fa-solid fa-vault"></i>
+          </div>
+          <span class="badge-pill" id="balanceStatusBadge">Siap Catat</span>
+        </div>
+        <div class="hero-body">
+          <span class="metric-title">TOTAL SALDO BERSIH</span>
+          <h2 class="metric-value hero-value" id="totalBalance">Rp 0</h2>
+          <div class="hero-footer-note">
+            <span id="balanceStatusText">Mulai tambahkan catatan pemasukan &amp; pengeluaran Anda.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Pemasukan -->
+      <div class="metric-card income-metric-card">
+        <div class="metric-header">
+          <span class="metric-title">TOTAL PEMASUKAN</span>
+          <div class="icon-circle icon-income">
+            <i class="fa-solid fa-arrow-up-right-dots"></i>
+          </div>
+        </div>
+        <div class="metric-body">
+          <h3 class="metric-value income-value" id="totalIncome">Rp 0</h3>
+          <div class="metric-stat">
+            <span class="stat-badge income-badge" id="incomeCount">0 Transaksi</span>
+            <span class="stat-label">Arus Kas Masuk</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Pengeluaran -->
+      <div class="metric-card expense-metric-card">
+        <div class="metric-header">
+          <span class="metric-title">TOTAL PENGELUARAN</span>
+          <div class="icon-circle icon-expense">
+            <i class="fa-solid fa-arrow-down-right-dots"></i>
+          </div>
+        </div>
+        <div class="metric-body">
+          <h3 class="metric-value expense-value" id="totalExpense">Rp 0</h3>
+          <div class="metric-stat">
+            <span class="stat-badge expense-badge" id="expenseCount">0 Transaksi</span>
+            <span class="stat-label">Arus Kas Keluar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Catatan & Batas Aman Pengeluaran Bulanan Section -->
+    <section class="monthly-budget-card" id="monthlyBudgetSection">
+      <div class="budget-card-header">
+        <div class="budget-title-area">
+          <div class="budget-icon-badge">
+            <i class="fa-solid fa-shield-heart"></i>
+          </div>
+          <div>
+            <h3>Catatan &amp; Batas Aman Pengeluaran Bulanan</h3>
+            <p>Pantau arus kas bulanan agar terhindar dari perilaku boros (Aturan Finansial 70/30)</p>
+          </div>
+        </div>
+        <!-- Month Filter Selector -->
+        <div class="month-selector-wrap">
+          <i class="fa-regular fa-calendar-check"></i>
+          <select id="budgetMonthSelect" title="Pilih Periode Bulan">
+            <!-- Populated dynamically via JS -->
+          </select>
+        </div>
+      </div>
+
+      <!-- 4 Monthly Quick Stat Cards -->
+      <div class="budget-stats-grid">
+        <!-- Pemasukan Bulan Ini -->
+        <div class="b-stat-box b-income">
+          <span class="b-stat-title"><i class="fa-solid fa-arrow-down-long"></i> Pemasukan Bulan Ini</span>
+          <h4 class="b-stat-val" id="monthIncomeVal">Rp 0</h4>
+          <span class="b-stat-hint" id="monthIncomeCount">0 Transaksi</span>
+        </div>
+
+        <!-- Pengeluaran Bulan Ini -->
+        <div class="b-stat-box b-expense">
+          <span class="b-stat-title"><i class="fa-solid fa-arrow-up-long"></i> Pengeluaran Bulan Ini</span>
+          <h4 class="b-stat-val" id="monthExpenseVal">Rp 0</h4>
+          <span class="b-stat-hint" id="monthExpenseCount">0 Transaksi</span>
+        </div>
+
+        <!-- Batas Aman Belanja (70%) -->
+        <div class="b-stat-box b-safe-limit">
+          <span class="b-stat-title"><i class="fa-solid fa-shield-halved"></i> Batas Pengeluaran Aman (70%)</span>
+          <h4 class="b-stat-val" id="monthSafeLimitVal">Rp 0</h4>
+          <span class="b-stat-hint">Idealnya 30% ditabung/investasi</span>
+        </div>
+
+        <!-- Sisa Kuota Aman -->
+        <div class="b-stat-box b-remaining">
+          <span class="b-stat-title"><i class="fa-solid fa-bullseye"></i> Sisa Kuota Belanja Aman</span>
+          <h4 class="b-stat-val" id="monthSafeRemainingVal">Rp 0</h4>
+          <span class="b-stat-hint" id="monthSafeRemainingHint">Bisa dipakai belanja</span>
+        </div>
+      </div>
+
+      <!-- Progress Track & Anti-Boros Advice -->
+      <div class="budget-progress-section">
+        <div class="progress-labels">
+          <span class="p-label" id="budgetProgressLabel">Pemakaian Batas Aman: 0%</span>
+          <span class="p-ratio-text" id="budgetCashflowRatio">Rasio Pengeluaran: 0% dari Pemasukan</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="budgetProgressBar" style="width: 0%;"></div>
+        </div>
+
+        <!-- Dynamic Financial Advice Box -->
+        <div class="advice-box" id="budgetAdviceBox">
+          <div class="advice-icon" id="adviceIcon"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="advice-content">
+            <h5 id="adviceTitle">Status Keuangan: Siap Catat</h5>
+            <p id="adviceMessage">Masukkan pemasukan bulan ini untuk melihat panduan batas pengeluaran aman dan analisis anti-boros.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Workspace Grid (Form + History) -->
+    <div class="workspace-grid">
+      <!-- Left Column: Form Tambah Transaksi -->
+      <section class="form-column">
+        <div class="panel-card form-panel">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <span class="panel-icon"><i class="fa-solid fa-plus"></i></span>
+              <div>
+                <h3>Tambah Transaksi</h3>
+                <p>Catat pengeluaran atau pemasukan baru</p>
+              </div>
+            </div>
+          </div>
+
+          <form id="transactionForm" novalidate autocomplete="off">
+            <!-- Modern Segmented Type Switcher -->
+            <div class="form-field">
+              <label class="field-label">Jenis Transaksi</label>
+              <div class="segmented-control">
+                <input type="radio" id="typeExpense" name="txType" value="expense" checked>
+                <label for="typeExpense" class="seg-btn seg-expense">
+                  <i class="fa-solid fa-circle-minus"></i> Pengeluaran
+                </label>
+
+                <input type="radio" id="typeIncome" name="txType" value="income">
+                <label for="typeIncome" class="seg-btn seg-income">
+                  <i class="fa-solid fa-circle-plus"></i> Pemasukan
+                </label>
+              </div>
+            </div>
+
+            <!-- Title Input -->
+            <div class="form-field">
+              <label for="txTitle" class="field-label">Judul Transaksi <span class="req">*</span></label>
+              <div class="input-box">
+                <span class="input-icon"><i class="fa-solid fa-pen-fancy"></i></span>
+                <input type="text" id="txTitle" placeholder="Contoh: Belanja Bulanan, Gaji, Makan Siang" required>
+              </div>
+            </div>
+
+            <!-- Amount Input & Quick Chips -->
+            <div class="form-field">
+              <label for="txAmount" class="field-label">Nominal (Rupiah) <span class="req">*</span></label>
+              <div class="input-box">
+                <span class="input-prefix">Rp</span>
+                <input type="text" id="txAmount" inputmode="numeric" placeholder="0" required>
+              </div>
+              <!-- Quick Add Nominal Chips -->
+              <div class="quick-chips">
+                <span class="chips-label">Cepat:</span>
+                <button type="button" class="chip-btn" data-add="10000">+10 rb</button>
+                <button type="button" class="chip-btn" data-add="50000">+50 rb</button>
+                <button type="button" class="chip-btn" data-add="100000">+100 rb</button>
+                <button type="button" class="chip-btn" data-add="500000">+500 rb</button>
+              </div>
+            </div>
+
+            <!-- Category & Date Row -->
+            <div class="form-row-duo">
+              <!-- Category -->
+              <div class="form-field">
+                <label for="txCategory" class="field-label">Kategori <span class="req">*</span></label>
+                <div class="input-box">
+                  <span class="input-icon"><i class="fa-solid fa-layer-group"></i></span>
+                  <select id="txCategory" required>
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+              </div>
+
+              <!-- Date -->
+              <div class="form-field">
+                <label for="txDate" class="field-label">Tanggal <span class="req">*</span></label>
+                <div class="input-box">
+                  <span class="input-icon"><i class="fa-regular fa-calendar"></i></span>
+                  <input type="date" id="txDate" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-field">
+              <label for="txNotes" class="field-label">Catatan Tambahan <span class="opt">(Opsional)</span></label>
+              <div class="input-box">
+                <span class="input-icon textarea-icon"><i class="fa-regular fa-message"></i></span>
+                <textarea id="txNotes" rows="2" placeholder="Tuliskan keterangan detail transaksi..."></textarea>
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <button type="submit" class="submit-btn" id="submitBtn">
+              <span>Simpan Transaksi</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Right Column: Riwayat & Filter -->
+      <section class="history-column">
+        <div class="panel-card history-panel">
+          <div class="panel-header header-between">
+            <div class="panel-title-wrap">
+              <span class="panel-icon icon-history"><i class="fa-solid fa-receipt"></i></span>
+              <div>
+                <h3>Riwayat Transaksi</h3>
+                <p id="historySubtitle">Daftar arus kas yang telah dimasukkan</p>
+              </div>
+            </div>
+            <div class="panel-actions">
+              <button type="button" class="action-btn export-action" id="exportBtn" title="Unduh ke Excel / CSV">
+                <i class="fa-solid fa-file-arrow-down"></i>
+                <span>Ekspor</span>
+              </button>
+              <button type="button" class="action-btn reset-action" id="resetBtn" title="Kosongkan semua data">
+                <i class="fa-regular fa-trash-can"></i>
+                <span>Reset</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modern Filter Toolbar -->
+          <div class="filter-toolbar">
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input type="text" id="searchInput" placeholder="Cari judul, kategori, atau catatan...">
+              <button type="button" id="clearSearchBtn" class="clear-search-btn" title="Bersihkan pencarian" style="display:none;">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <div class="filter-dropdowns">
+              <!-- Type Filter -->
+              <div class="select-pill-wrap">
+                <i class="fa-solid fa-filter"></i>
+                <select id="filterType">
+                  <option value="all">Semua Jenis</option>
+                  <option value="income">Pemasukan</option>
+                  <option value="expense">Pengeluaran</option>
+                </select>
+              </div>
+
+              <!-- Category Filter -->
+              <div class="select-pill-wrap">
+                <i class="fa-solid fa-tags"></i>
+                <select id="filterCategory">
+                  <option value="all">Semua Kategori</option>
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transaction List Container -->
+          <div class="tx-list-wrapper">
+            <div id="transactionList" class="tx-list">
+              <!-- Populated dynamically -->
+            </div>
+
+            <!-- Empty State UI -->
+            <div id="emptyState" class="empty-state-modern">
+              <div class="empty-graphic">
+                <div class="empty-icon-bubble">
+                  <i class="fa-solid fa-wallet"></i>
+                </div>
+                <div class="empty-sparkle"><i class="fa-solid fa-sparkles"></i></div>
+              </div>
+              <h4>Belum Ada Transaksi</h4>
+              <p>Daftar keuangan Anda saat ini masih kosong. Silakan gunakan formulir di samping untuk mulai mencatat transaksi pertama Anda!</p>
+            </div>
+          </div>
+
+          <!-- History Summary Bar -->
+          <div class="history-bar-footer">
+            <div class="footer-count">
+              <span class="dot-indicator"></span>
+              <span id="filteredCountInfo">0 transaksi tercatat</span>
+            </div>
+            <div class="footer-total">
+              <span class="total-caption">Total Hasil:</span>
+              <span class="total-amount" id="filteredNetTotal">Rp 0</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modern Subtle Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="footer-dot"></span>
+        <span>Kelola Keuangan Mandiri &bull; Pemrograman Web I &bull; Universitas Pamulang</span>
+      </div>
+      <p class="footer-note">Simpanan lokal browser otomatis (LocalStorage) &bull; Privasi aman pada perangkat Anda</p>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript Logic -->
+  <script src="index.js"></script>
+</body>
+</html>
